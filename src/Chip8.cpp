@@ -18,7 +18,6 @@ Chip8::Chip8() {
     this->draw_flag = false;
 
     this->set_opcodes();
-
     // Init random generator (fixed seed for reproducible bugs)
     srand(42);
 }
@@ -47,6 +46,7 @@ bool Chip8::load_cartridge(std::string path) {
     for (unsigned int i = 0; i < file_contents.size(); i++)
         this->memory[0x200 + i] = file_contents[i];
 
+    std::cout << "Cartridge loaded in memory." << std::endl;
     return true;
 }
 
@@ -73,6 +73,7 @@ bool Chip8::verify_implementation(bool verbose) {
 
     }
 
+    std::cout << "All opcodes successfully decoded." << std::endl;
     return true;
 }
 
@@ -129,7 +130,30 @@ void Chip8::run_cartridge(void) {
             std::cout << "ERROR: Could not fetch opcode (" << std::hex << this->opcode << ")." << std::endl;
             return;
         }
+
+        if (this->draw_flag)
+            draw_graphics();
+
+        check_keys();
+
+        if(this->delay_timer > 0)
+            --delay_timer;
+
+        if (this->sound_timer > 0) {
+            if (this->sound_timer == 1) {
+                std::cout << "Do the BEEP" << std::endl;
+                --sound_timer;
+            }
+        }
     }
+}
+
+void Chip8::draw_graphics(void) {
+
+}
+
+void Chip8::check_keys(void) {
+
 }
 
 bool Chip8::check_borrow(uint8_t reg1, uint8_t reg2) {
@@ -368,6 +392,23 @@ void Chip8::DRAW(void) {
     uint8_t x = this->V[(this->opcode & 0x0F00) >> 8];
     uint8_t y = this->V[(this->opcode & 0x00F0) >> 4];
     uint8_t h = this->V[this->opcode & 0x00F];
+    uint8_t pixel;
+
+    this->V[0xF] = 0;
+
+    for (unsigned int yline = 0; yline < h; yline++) {
+        pixel = this->memory[this->I + yline];
+        for (unsigned int xline = 0; xline < 8; xline++) {
+            if ((pixel & (0x80 >> xline)) != 0) {
+                if (gfx[x + xline + ((y + yline) * 64)] == 1)
+                    this->V[0xF] = 1;
+                gfx[x + xline + ((y + yline) * 64)] ^= 1;
+            }
+        }
+    }
+
+    this->draw_flag = true;
+    this->pc += 2;
 }
 
 // OPCODE 0xEXCC

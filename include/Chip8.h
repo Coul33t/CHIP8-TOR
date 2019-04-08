@@ -11,6 +11,10 @@
 
 #include <stdlib.h> // rand
 
+#include <memory>
+
+#include "Screen.h"
+
 struct instruction {
     // INCLUSIVE boundary for opcodes corresponding to the function
     std::pair<uint16_t, uint16_t> range;
@@ -36,6 +40,9 @@ class Chip8 {
         bool verify_implementation(bool verbose = false);
         bool run_instructions(bool step_by_step = false, bool verbose = false);
         void run_cartridge(void);
+
+        void draw_graphics(void);
+        void check_keys(void);
 
         bool check_borrow(uint8_t reg1, uint8_t reg2);
         bool check_carry(uint8_t reg1, uint8_t reg2);
@@ -113,6 +120,9 @@ class Chip8 {
         // Screen
         std::array<uint8_t, 64 * 32> gfx;
         bool draw_flag;
+
+        // Reference to the screen
+        std::unique_ptr<Screen> screen;
 
 };
 

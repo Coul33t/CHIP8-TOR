@@ -1,12 +1,16 @@
 #include <iostream>
-#include "Chip8.h"
+#include "Chip8_emulator.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     std::cout << "Hello world!" << std::endl;
-    Chip8 c8;
-    c8.load_cartridge("roms\\PONG");
+
+    Chip8_emulator emu;
+    emu.load_cartridge("roms\\PONG");
+    emu.run_emulator();
+
+    /*c8.load_cartridge("roms\\PONG");
     c8.verify_implementation();
     c8.run_instructions();
-    c8.run_cartridge();
+    c8.run_cartridge();*/
     return 0;
 }
