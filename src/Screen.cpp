@@ -19,8 +19,8 @@ bool Screen::init_SDL() {
 
     p_window = SDL_CreateWindow("CHIP8 EMULATOR", SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
-                                                  m_size.first * 32,
-                                                  m_size.second * 32,
+                                                  m_size.first * 8,
+                                                  m_size.second * 8,
                                                   SDL_WINDOW_SHOWN);
 
     if (!p_window) {

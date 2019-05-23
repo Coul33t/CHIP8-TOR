@@ -35,15 +35,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add directory="include" />
-			<Add directory="../../Libraries/C++/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/include" />
+			<Add directory="../../Libraries/C++/SDL2/SDL2-2.0.9/i686-w64-mingw32/include" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32" />
 			<Add option="-lSDL2main" />
 			<Add option="-lSDL2" />
-			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2main.a" />
-			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.dll.a" />
-			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\x86_64-w64-mingw32\lib\libSDL2.a" />
+			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\i686-w64-mingw32\lib\libSDL2main.a" />
+			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\i686-w64-mingw32\lib\libSDL2.dll.a" />
+			<Add library="..\..\Libraries\C++\SDL2\SDL2-2.0.9\i686-w64-mingw32\lib\libSDL2.a" />
 			<Add directory="../../Libraries/C++/SDL2/SDL2-2.0.9/x86_64-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="include/Chip8.h" />
