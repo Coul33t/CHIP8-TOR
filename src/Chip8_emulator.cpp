@@ -13,6 +13,9 @@ void Chip8_emulator::load_cartridge(const std::string& path) {
     m_chip8.verify_implementation();
 }
 
+void Chip8_emulator::test_screen() {
+    this->m_screen.test_display();
+}
 void Chip8_emulator::run_emulator() {
     m_chip8.run_cartridge();
 }

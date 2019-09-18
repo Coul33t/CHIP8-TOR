@@ -10,6 +10,7 @@ class Chip8_emulator
         Chip8_emulator();
         virtual ~Chip8_emulator();
         void load_cartridge(const std::string& path);
+        void test_screen(void);
         void run_emulator(void);
     protected:
     private:
