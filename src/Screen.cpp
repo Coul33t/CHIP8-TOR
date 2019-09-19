@@ -43,7 +43,23 @@ bool Screen::init_SDL() {
 }
 
 void Screen::render_frame(std::array<uint8_t, 64 * 32>& to_render) {
+
     SDL_Rect rect;
+
+    uint8_t test_value = 0x80;
+    int result = test_value & 0x80;
+    if (result) {
+        std::cout << "It worked" << std::endl;
+    }
+
+    if (test_value & 0x80) {
+        std::cout << "It worked too" << std::endl;
+    }
+
+    test_value = to_render[0];
+    result = test_value & 0x80;
+
+
     for (int i = 0; i < m_size.second; i++) {
         for (int j = 0; j < m_size.first; j++) {
             //std::cout << std::hex << static_cast<int>(to_render[i*j + j]) << std::endl;
@@ -51,42 +67,50 @@ void Screen::render_frame(std::array<uint8_t, 64 * 32>& to_render) {
             int x = j * upscale_value;
             int y = i * upscale_value;
 
-            if (to_render[i*j + j] & 0x80) {
-               rect = {x * upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
-               SDL_RenderFillRect(this->p_renderer, &rect);
+            if (to_render[i*m_size.first + j] != 0x00) {
+                std::cout << i << " " << j << " " << i*j + i << std::endl;
+                std::cout << std::hex << static_cast<int>(to_render[i*m_size.first + j]) << std::dec << " " << static_cast<int>(to_render[i*m_size.first + j]) << std::endl;
+                std::cout << "Yo" << std::endl;
             }
 
-            if (to_render[i*j + j] & 0x40) {
+            // Bug here: never works (even when byte & 0x80 == 0x80), and can't access memory after
+            if (to_render[i*m_size.first + j] & 0x80) {
+               rect = {x * upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+               std::cout << x * upscale_value << " " << y * upscale_value << std::endl;
+            }
+
+            if (to_render[i*m_size.first + j] & 0x40) {
                rect = {x + this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x20) {
+            if (to_render[i*m_size.first + j] & 0x20) {
                rect = {x + 2 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x10) {
+            if (to_render[i*m_size.first + j] & 0x10) {
                rect = {x + 3 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x8) {
+            if (to_render[i*m_size.first + j] & 0x08) {
                rect = {x + 4 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x4) {
+            if (to_render[i*m_size.first + j] & 0x04) {
                rect = {x + 5 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x2) {
+            if (to_render[i*m_size.first + j] & 0x02) {
                rect = {x + 6 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }
 
-            if (to_render[i*j + j] & 0x1) {
+            if (to_render[i*m_size.first + j] & 0x01) {
                rect = {x + 7 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
                SDL_RenderFillRect(this->p_renderer, &rect);
             }

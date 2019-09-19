@@ -41,7 +41,6 @@ class Chip8 {
         bool run_instructions(bool step_by_step = false, bool verbose = false);
         void run_cartridge(void);
 
-        void draw_graphics(void);
         void check_keys(void);
 
         bool check_borrow(uint8_t reg1, uint8_t reg2);

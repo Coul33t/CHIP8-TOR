@@ -15,6 +15,8 @@ Chip8::Chip8(Screen* screen) {
 
     this->key = std::vector<uint8_t>(16, 0x00);
 
+    std::fill(std::begin(gfx), std::end(gfx), 0);
+
     this->screen = screen;
 
     this->draw_flag = false;
@@ -122,6 +124,7 @@ void Chip8::run_cartridge(void) {
 
         for (unsigned int i = 0; i < this->instr.size(); i++) {
             if ((this->instr[i].range.first <= this->opcode) && (this->instr[i].range.second >= this->opcode)) {
+                //std::cout << this->instr[i].name << std::endl;
                 this->instr[i].func();
                 found = true;
                 break;
@@ -133,8 +136,11 @@ void Chip8::run_cartridge(void) {
             return;
         }
 
-        if (this->draw_flag)
+        if (this->draw_flag) {
             screen->render_frame(this->gfx);
+            draw_flag = false;
+        }
+
 
         check_keys();
 
@@ -147,11 +153,9 @@ void Chip8::run_cartridge(void) {
                 --sound_timer;
             }
         }
+
+        //Sleep(500);
     }
-}
-
-void Chip8::draw_graphics(void) {
-
 }
 
 void Chip8::check_keys(void) {
@@ -182,7 +186,7 @@ void Chip8::check_keys(void) {
                 else if(key_code == SDLK_c) key[0xB] = 1;
                 else if(key_code == SDLK_v) key[0xF] = 1;
 
-                std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
+                //std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
 
         }
 
@@ -209,7 +213,7 @@ void Chip8::check_keys(void) {
                 else if(key_code == SDLK_c) key[0xB] = 0;
                 else if(key_code == SDLK_v) key[0xF] = 0;
 
-                std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
+                //std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
         }
     }
 }
@@ -449,7 +453,7 @@ void Chip8::RAND(void) {
 void Chip8::DRAW(void) {
     uint8_t x = this->V[(this->opcode & 0x0F00) >> 8];
     uint8_t y = this->V[(this->opcode & 0x00F0) >> 4];
-    uint8_t h = this->V[this->opcode & 0x00F];
+    uint8_t h = this->opcode & 0x000F;
     uint8_t pixel;
 
     this->V[0xF] = 0;

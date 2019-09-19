@@ -2,7 +2,7 @@
 
 Chip8_emulator::Chip8_emulator(bool test) {
     this->test = test;
-    this->m_screen = new Screen();
+    this->m_screen = new Screen(0);
     this->m_chip8 = new Chip8(m_screen);
     //ctor
 }
