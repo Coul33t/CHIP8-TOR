@@ -1,6 +1,6 @@
 #include "Chip8.h"
 
-Chip8::Chip8() {
+Chip8::Chip8(Screen* screen) {
     this->memory = std::vector<uint8_t>(4096, 0x00);
     this->V = std::vector<uint8_t>(16, 0x00);
 
@@ -14,6 +14,8 @@ Chip8::Chip8() {
     this->sound_timer = 0x00;
 
     this->key = std::vector<uint8_t>(16, 0x00);
+
+    this->screen = screen;
 
     this->draw_flag = false;
 
@@ -132,7 +134,7 @@ void Chip8::run_cartridge(void) {
         }
 
         if (this->draw_flag)
-            draw_graphics();
+            screen->render_frame(this->gfx);
 
         check_keys();
 
@@ -153,7 +155,63 @@ void Chip8::draw_graphics(void) {
 }
 
 void Chip8::check_keys(void) {
+    SDL_Event event;
+    SDL_Keycode key_code;
 
+    while (SDL_PollEvent(&event)) {
+        if(event.type == SDL_KEYDOWN){
+                key_code = event.key.keysym.sym;
+
+                if (key_code == SDLK_1)     key[0x1] = 1;
+                else if(key_code == SDLK_2) key[0x2] = 1;
+                else if(key_code == SDLK_3) key[0x3] = 1;
+                else if(key_code == SDLK_4) key[0xC] = 1;
+
+                else if(key_code == SDLK_a) key[0x4] = 1;
+                else if(key_code == SDLK_z) key[0x5] = 1;
+                else if(key_code == SDLK_e) key[0x6] = 1;
+                else if(key_code == SDLK_r) key[0xD] = 1;
+
+                else if(key_code == SDLK_q) key[0x7] = 1;
+                else if(key_code == SDLK_s) key[0x8] = 1;
+                else if(key_code == SDLK_d) key[0x9] = 1;
+                else if(key_code == SDLK_f) key[0xE] = 1;
+
+                else if(key_code == SDLK_w) key[0xA] = 1;
+                else if(key_code == SDLK_x) key[0x0] = 1;
+                else if(key_code == SDLK_c) key[0xB] = 1;
+                else if(key_code == SDLK_v) key[0xF] = 1;
+
+                std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
+
+        }
+
+        if(event.type == SDL_KEYDOWN){
+                key_code = event.key.keysym.sym;
+
+                if (key_code == SDLK_1)     key[0x1] = 0;
+                else if(key_code == SDLK_2) key[0x2] = 0;
+                else if(key_code == SDLK_3) key[0x3] = 0;
+                else if(key_code == SDLK_4) key[0xC] = 0;
+
+                else if(key_code == SDLK_a) key[0x4] = 0;
+                else if(key_code == SDLK_z) key[0x5] = 0;
+                else if(key_code == SDLK_e) key[0x6] = 0;
+                else if(key_code == SDLK_r) key[0xD] = 0;
+
+                else if(key_code == SDLK_q) key[0x7] = 0;
+                else if(key_code == SDLK_s) key[0x8] = 0;
+                else if(key_code == SDLK_d) key[0x9] = 0;
+                else if(key_code == SDLK_f) key[0xE] = 0;
+
+                else if(key_code == SDLK_w) key[0xA] = 0;
+                else if(key_code == SDLK_x) key[0x0] = 0;
+                else if(key_code == SDLK_c) key[0xB] = 0;
+                else if(key_code == SDLK_v) key[0xF] = 0;
+
+                std::cout << "Key pressed: " << SDL_GetKeyName(key_code) << std::endl;
+        }
+    }
 }
 
 bool Chip8::check_borrow(uint8_t reg1, uint8_t reg2) {

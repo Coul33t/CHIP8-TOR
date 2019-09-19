@@ -30,7 +30,7 @@ struct instruction {
 
 class Chip8 {
     public:
-        Chip8();
+        Chip8(Screen*);
         virtual ~Chip8();
 
         void set_opcodes(void);
@@ -122,7 +122,7 @@ class Chip8 {
         bool draw_flag;
 
         // Reference to the screen
-        std::unique_ptr<Screen> screen;
+        Screen* screen;
 
 };
 

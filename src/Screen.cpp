@@ -1,10 +1,11 @@
 #include "Screen.h"
 
-Screen::Screen() {
+Screen::Screen(int delay) {
     m_size = std::pair<unsigned short, unsigned short>(64, 32);
     p_window = nullptr;
     p_renderer = nullptr;
-    upscale_value = 100;
+    upscale_value = 10;
+    delay_display_ms = delay;
     init_SDL();
 }
 
@@ -22,8 +23,8 @@ bool Screen::init_SDL() {
 
     p_window = SDL_CreateWindow("CHIP8 EMULATOR", SDL_WINDOWPOS_UNDEFINED,
                                                   SDL_WINDOWPOS_UNDEFINED,
-                                                  m_size.first * 8,
-                                                  m_size.second * 8,
+                                                  m_size.first * upscale_value,
+                                                  m_size.second * upscale_value,
                                                   SDL_WINDOW_SHOWN);
 
     if (!p_window) {
@@ -39,6 +40,66 @@ bool Screen::init_SDL() {
     }
 
     return true;
+}
+
+void Screen::render_frame(std::array<uint8_t, 64 * 32>& to_render) {
+    SDL_Rect rect;
+    for (int i = 0; i < m_size.second; i++) {
+        for (int j = 0; j < m_size.first; j++) {
+            //std::cout << std::hex << static_cast<int>(to_render[i*j + j]) << std::endl;
+
+            int x = j * upscale_value;
+            int y = i * upscale_value;
+
+            if (to_render[i*j + j] & 0x80) {
+               rect = {x * upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x40) {
+               rect = {x + this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x20) {
+               rect = {x + 2 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x10) {
+               rect = {x + 3 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x8) {
+               rect = {x + 4 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x4) {
+               rect = {x + 5 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x2) {
+               rect = {x + 6 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (to_render[i*j + j] & 0x1) {
+               rect = {x + 7 * this->upscale_value, y * upscale_value, this->upscale_value, this->upscale_value};
+               SDL_RenderFillRect(this->p_renderer, &rect);
+            }
+
+            if (delay_display_ms > 0) {
+                SDL_RenderPresent(this->p_renderer);
+                Sleep(delay_display_ms);
+            }
+
+        }
+    }
+
+    SDL_RenderPresent(this->p_renderer);
 }
 
 void Screen::test_display(void) {
@@ -66,38 +127,72 @@ void Screen::test_display(void) {
     SDL_RenderClear(this->p_renderer);
 
     unsigned int y = 0;
+    unsigned int x = 0;
     std::vector<uint8_t> line_to_draw;
 
     SDL_SetRenderDrawColor(this->p_renderer,255, 255, 255, 255);
-    for (int i=0; i<80/5; i += 5) {
-        //std::cout << "x: " << i%5 << std::endl;
-        //std::cout << "y: " << (int)(i/5) << std::endl;
+
+    for (int i=0; i<80; i += 5) {
+        /*std::cout << "i: " << i << std::endl;
+        std::cout << "x: " << x << std::endl;
+        std::cout << "y: " << y << std::endl;*/
         line_to_draw.clear();
 
-        for (int j=i, j<i+5; j++)
+        for (int j=i; j<i+5; j++)
             line_to_draw.push_back(array[j]);
-        draw_hexa_line(i, y, line_to_draw);
 
-        if (i% == 0)
-            y += 5;
+        draw_test_hexa_line(x*this->upscale_value, y*this->upscale_value, line_to_draw);
+
+        x += 5;
+        if (x%20  == 0) {
+            x = 0;
+            y += 6;
+        }
+
     }
 
     SDL_RenderPresent(this->p_renderer);
-    std::cin.get();
+    std::cout << "Screen is OK" << std::endl;
 }
 
-void Screen::render_frame(uint8_t* to_render) {
+void Screen::draw_test_hexa_line(unsigned int x, unsigned int y, std::vector<uint8_t>& codes) {
 
-}
-
+    SDL_Rect rect;
+    // For every lines (vertical)
     for (unsigned int i = 0; i < codes.size(); i++) {
-        //std::cout << "Current code: " << std::hex << static_cast<int>(code) << std::endl;
+        //std::cout << "Current code: " << std::hex << static_cast<int>(codes[i]) << std::endl;
         int shifted = codes[i] >> 4;
-        //std::cout << "Masking result: " << std::hex << static_cast<int>(code) << std::endl;
-        SDL_Rect rect;
-        rect = {, y, 1, 1}; // TODO here
-        y++;
+        //std::cout << "Masking result: " << std::hex << static_cast<int>(shifted) << std::endl;
+
+        // For every pixel in the line
+        if (shifted & 0x8) {
+           rect = {x, y, this->upscale_value, this->upscale_value};
+           SDL_RenderFillRect(this->p_renderer, &rect);
+        }
+
+        if (shifted & 0x4) {
+           rect = {x + this->upscale_value, y, this->upscale_value, this->upscale_value};
+           SDL_RenderFillRect(this->p_renderer, &rect);
+        }
+
+        if (shifted & 0x2) {
+           rect = {x + 2 * this->upscale_value, y, this->upscale_value, this->upscale_value};
+           SDL_RenderFillRect(this->p_renderer, &rect);
+        }
+
+        if (shifted & 0x1) {
+           rect = {x + 3 * this->upscale_value, y, this->upscale_value, this->upscale_value};
+           SDL_RenderFillRect(this->p_renderer, &rect);
+        }
+
+        y += this->upscale_value;
+
+        // If there's no delay, no need to make multiple calls to the rendering function
+        // nor the Sleep function
+        if (delay_display_ms > 0) {
+            SDL_RenderPresent(this->p_renderer);
+            Sleep(delay_display_ms);
+        }
+
     }
-
-
 }

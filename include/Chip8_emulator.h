@@ -7,15 +7,15 @@
 class Chip8_emulator
 {
     public:
-        Chip8_emulator();
+        Chip8_emulator(bool test = false);
         virtual ~Chip8_emulator();
         void load_cartridge(const std::string& path);
-        void test_screen(void);
         void run_emulator(void);
     protected:
     private:
-        Chip8 m_chip8;
-        Screen m_screen;
+        Chip8* m_chip8;
+        Screen* m_screen;
+        bool test;
 };
 
 #endif // CHIP8_EMULATOR_H

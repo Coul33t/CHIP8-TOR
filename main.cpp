@@ -4,8 +4,7 @@
 int main(int argc, char *argv[]) {
     std::cout << "Hello world!" << std::endl;
 
-    Chip8_emulator emu;
-    emu.test_screen();
+    Chip8_emulator emu(false);
     emu.load_cartridge("roms\\PONG");
     emu.run_emulator();
 
